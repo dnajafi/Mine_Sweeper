@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { timeToStartGame } from '../reducers/game';
 
 const Square = (props) => {
 	return (
@@ -44,12 +45,24 @@ class Board extends Component {
 					{rows}
 				</div>
 
+				{!this.props.boardCreated ?
+					<button onClick={() => this.props.timeToStartGame()}>Start Game</button>
+				:
+					null
+				}
+
 			</div>
 		);
 	}
 }
 
-export default connect()(Board);
+const mapStateToProps = (state) => ({ board: state.game.board, boardCreated: state.game.boardCreated });
+const mapDispatchToProps = { timeToStartGame };
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Board);
 
 
 
