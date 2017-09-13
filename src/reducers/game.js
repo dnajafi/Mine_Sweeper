@@ -1,35 +1,35 @@
 const findNumMines = function(row, col, board) {
 	let countMines = 0;
 
-	if(row > 0 && col > 0 && board[row-1][col-1]['symbol'] === 'x') {
+	if(row > 0 && col > 0 && board[row-1][col-1]['symbol'] === '✸') {
 		countMines++;
 	}
 
-	if(row > 0 && board[row-1][col]['symbol'] === 'x') {
+	if(row > 0 && board[row-1][col]['symbol'] === '✸') {
 		countMines++;
 	}
 
-	if(row > 0 && col < (board.length - 2) && board[row-1][col+1]['symbol'] === 'x') {
+	if(row > 0 && col < (board.length - 2) && board[row-1][col+1]['symbol'] === '✸') {
 		countMines++;
 	}
 
-	if(col < (board.length - 2) && board[row][col+1]['symbol'] === 'x') {
+	if(col < (board.length - 2) && board[row][col+1]['symbol'] === '✸') {
 		countMines++;
 	}
 
-	if(row < (board.length - 2) && col < (board.length - 2) && board[row+1][col+1]['symbol'] === 'x') {
+	if(row < (board.length - 2) && col < (board.length - 2) && board[row+1][col+1]['symbol'] === '✸') {
 		countMines++;
 	}
 
-	if(row < (board.length - 2) && board[row+1][col]['symbol'] === 'x') {
+	if(row < (board.length - 2) && board[row+1][col]['symbol'] === '✸') {
 		countMines++;
 	}
 
-	if(row < (board.length - 2) && col > 0 && board[row+1][col-1]['symbol'] === 'x') {
+	if(row < (board.length - 2) && col > 0 && board[row+1][col-1]['symbol'] === '✸') {
 		countMines++;
 	}
 
-	if(col > 0 && board[row][col-1]['symbol'] === 'x') {
+	if(col > 0 && board[row][col-1]['symbol'] === '✸') {
 		countMines++;
 	}
 
@@ -37,7 +37,6 @@ const findNumMines = function(row, col, board) {
 };
 
 const buildBoard = function(board) {
-
 	let numMines = 10;
 
 	while(numMines > 0) {
@@ -45,14 +44,8 @@ const buildBoard = function(board) {
 
 		if(randomSquare < 10) {
 			// the number is in the first row
-			if(board[0][randomSquare] !== 'x') {
-				console.log('*****');
-				console.log(board[0][randomSquare]);
-				board[0][randomSquare].symbol = 'x';
-				console.log(board[0][randomSquare]);
-				console.log('*****');
-				// board[0][randomSquare]['hasBeenClicked'] = false;
-				// board[0][randomSquare]['isFlag'] = false;
+			if(board[0][randomSquare] !== '✸') {
+				board[0][randomSquare].symbol = '✸';
 				numMines--;
 			} else {
 				continue;
@@ -62,11 +55,8 @@ const buildBoard = function(board) {
 			let col = randomSquare % 10;
 			let row = Math.floor(randomSquare / 10);
 
-			if(board[row][col] !== 'x') {
-				console.log(board[row][col].symbol);
-				board[row][col].symbol = 'x';
-				// board[row][col]['hasBeenClicked'] = false;
-				// board[row][col]['isFlag'] = false;
+			if(board[row][col] !== '✸') {
+				board[row][col].symbol = '✸';
 				numMines--;
 			} else {
 				continue;
@@ -76,13 +66,11 @@ const buildBoard = function(board) {
 
 	for(let i=0; i<board.length; i++) {
 		for(let j=0; j<board[i].length; j++) {
-			if(board[i][j] !== 'x') {
+			if(board[i][j] !== '✸') {
 				let numMines = findNumMines(i, j, board);
 
 				if(numMines !== 0) {
 					board[i][j].symbol = numMines.toString();
-					// board[i][j]['hasBeenClicked'] = false;
-					// board[i][j]['isFlag'] = false;
 				}
 			} 
 		}
@@ -122,12 +110,16 @@ const buildBoard = function(board) {
 
 
 const initState = {
-	board: null
+	board: null,
+	gameOver: false,
+	losingCoords: [-1, -1]
 };
 
 const START_GAME = 'START_GAME';
+const CLICK_SQUARE = 'CLICK_SQUARE';
 
 const startGame = () => ({ type: START_GAME });
+const clickSquare = (row, col, shiftFlag) => ({ type: CLICK_SQUARE, payload: {row: row, col: col, shiftFlag: shiftFlag} });
 
 export const timeToStartGame = () => {
 	return (dispatch) => {
@@ -135,22 +127,132 @@ export const timeToStartGame = () => {
 	};
 };
 
+export const clickOnSquare = (row, col, shiftFlag) => {
 
+	return (dispatch) => {
+		dispatch(clickSquare(row, col, shiftFlag));
+	}
+
+};
+
+const augmentBoard = function(row, col, board, shiftFlag) {
+
+	let currSquare = board[row][col];
+
+	if(shiftFlag) {
+		currSquare.isFlag = !currSquare.isFlag;
+	}	else {
+
+		if(currSquare.symbol === '✸') {
+			return 'LOST';
+		}
+
+		if(!currSquare.hasBeenClicked) {
+			currSquare.hasBeenClicked = true;
+
+			let numSquaresToReveal = Math.floor(Math.random() * 4);
+			let randomCountDown = 5; // just in case we can't decrement numSquaresToReveal down to 0
+
+			while(numSquaresToReveal > 0 || randomCountDown !== 0) {
+				if(row > 0  && !board[row-1][col].hasBeenClicked && board[row-1][col].symbol !== '✸') {
+					board[row-1][col].hasBeenClicked = true;
+					numSquaresToReveal--;
+					continue;
+				}
+				if(row > 0 && col < board.length-2 && !board[row-1][col+1].hasBeenClicked && board[row-1][col+1].symbol !== '✸') {
+					board[row-1][col+1].hasBeenClicked = true;
+					numSquaresToReveal--;
+					continue;
+				}
+				if(col < board.length-2 && !board[row][col+1].hasBeenClicked && board[row][col+1].symbol !== '✸') {
+					board[row][col+1].hasBeenClicked = true;
+					numSquaresToReveal--;
+					continue;
+				}
+				if(row < board.length-2 && col < board.length-2 && !board[row+1][col+1].hasBeenClicked && board[row+1][col+1].symbol !== '✸') {
+					board[row+1][col+1].hasBeenClicked = true;
+					numSquaresToReveal--;
+					continue;
+				}
+				if(row < board.length-2 && !board[row+1][col].hasBeenClicked && board[row+1][col].symbol !== '✸') {
+					board[row+1][col].hasBeenClicked = true;
+					numSquaresToReveal--;
+					continue;
+				}
+				if(row < board.length-2 && col > 0 && !board[row+1][col-1].hasBeenClicked && board[row+1][col-1].symbol !== '✸') {
+					board[row+1][col-1].hasBeenClicked = true;
+					numSquaresToReveal--;
+					continue;
+				}
+				if(col > 0 && !board[row][col-1].hasBeenClicked && board[row][col-1].symbol !== '✸') {
+					board[row][col-1].hasBeenClicked = true;
+					numSquaresToReveal--;
+					continue;
+				}
+				randomCountDown--;
+			}
+		}
+	}
+
+	let newBoard = board.slice();
+
+	newBoard[row][col] = currSquare;
+	return newBoard;
+};
+
+
+const turnAllSquares = function(board) {
+
+	let newBoard = board.slice();
+
+	for(let i=0; i<newBoard.length; i++) {
+		for(let j=0; j<newBoard[i].length; j++) {
+			newBoard[i][j].hasBeenClicked = true;
+		}
+	}
+
+	return newBoard;
+}
 
 
 export default (state = initState, action) => {
 
 	switch(action.type) {
 		case START_GAME:
-			// let board = buildBoard(new Array(10).fill().map(() => new Array(10).fill({
-			// 	'symbol': '',
-			// 	'hasBeenClicked' : false,
-			// 	'isFlag': false
-			// })))
+			let board = [];
+			for(let i=0; i<10; i++) {
+				let row = [];
+				for(let j=0; j<10; j++) {
+					row.push({'symbol':'','hasBeenClicked':false,'isFlag':false });
+				}
+				board.push(row);
+			}
+			// let board = buildBoard(new Array(10).fill().map(() => [{'symbol':'','hasBeenClicked':false,'isFlag':false }, 
+			// 	{'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, 
+			// 	{'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, 
+			// 	{'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, 
+			// 	{'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, 
+			// 	{'symbol':'','hasBeenClicked':false,'isFlag':false }]))
+			board = buildBoard(board);
+			return { ...state, board: board, gameOver: false, losingCoords: [-1, -1] }
 
-			let board = buildBoard(new Array(10).fill().map(() => [{'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }, {'symbol':'','hasBeenClicked':false,'isFlag':false }]))
+		case CLICK_SQUARE:
+			let result = augmentBoard(action.payload.row, action.payload.col, state.board, action.payload.shiftFlag);
 
-			return { ...state, board: board }
+			if(result === 'LOST') {
+				// GAME OVER
+
+				// TURN ALL SQUARES TRUE
+				let losingBoard = turnAllSquares(state.board);
+
+				return { ...state, gameOver: true, board: losingBoard, losingCoords: [action.payload.row, action.payload.col] };
+
+			} else {
+				// result is equeal to the new board
+				
+				console.log(result);
+				return { ...state, board: result };
+			}
 
 		default:
 			return state;
