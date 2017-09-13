@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { timeToStartGame } from '../reducers/game';
+import smiley from '../smileyFace.png';
 
 const Square = (props) => {
 	return (
@@ -27,6 +28,8 @@ class Board extends Component {
 
 	render() {
 
+		// console.log(this.props.board);
+
 		let rows = [];
 
 		for(let i=0; i<10; i++) {
@@ -36,27 +39,18 @@ class Board extends Component {
 		return (
 
 			<div className="board-container">
-
-				<div className="smiley">
-					<p>Smiley Face</p>
-				</div>
-
+				<button style={{backgroundColor: "white"}} onClick={() => this.props.timeToStartGame()}><img className="smiley" src={smiley} /></button>
+				
 				<div className="board">
 					{rows}
 				</div>
-
-				{!this.props.boardCreated ?
-					<button onClick={() => this.props.timeToStartGame()}>Start Game</button>
-				:
-					null
-				}
 
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = (state) => ({ board: state.game.board, boardCreated: state.game.boardCreated });
+const mapStateToProps = (state) => ({ board: state.game.board });
 const mapDispatchToProps = { timeToStartGame };
 
 export default connect(
