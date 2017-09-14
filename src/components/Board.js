@@ -7,6 +7,20 @@ import sadFace from '../sadFace.jpeg';
 const Square = (props) => {
 
 	if(props.board) {
+		if(props.isWinner) {
+			return (
+				<button className="winnerSquare" onClick={ (evt) => props.onClick(props.row, props.col, evt.shiftKey) }>
+				</button>
+			);
+		}
+
+		if(props.board[props.row][props.col].isFlag) {
+			return (
+				<button className="flagSquare" onClick={ (evt) => props.onClick(props.row, props.col, evt.shiftKey) }>
+					⚐
+				</button>
+			);
+		}
 
 		if(props.losingCoords[0] === props.row && props.losingCoords[1] === props.col) {
 			return (
@@ -40,7 +54,7 @@ class Board extends Component {
 
 	renderSquare(row, col) {
 		return (
-			<Square row={row} col={col} onClick={this.props.clickOnSquare} board={this.props.board} losingCoords={this.props.losingCoords} />
+			<Square row={row} col={col} onClick={this.props.clickOnSquare} board={this.props.board} losingCoords={this.props.losingCoords} isWinner={this.props.isWinner} />
 		);
 	}
 
@@ -50,6 +64,10 @@ class Board extends Component {
 			squares.push(<div key={i}>{this.renderSquare(row, i)}</div>);
 		}
 		return squares;
+	}
+
+	componentDidMount() {
+		this.props.timeToStartGame();
 	}
 
 	render() {
@@ -80,7 +98,7 @@ class Board extends Component {
 	}
 }
 
-const mapStateToProps = (state) => ({ board: state.game.board, gameOver: state.game.gameOver, losingCoords: state.game.losingCoords });
+const mapStateToProps = (state) => ({ board: state.game.board, gameOver: state.game.gameOver, losingCoords: state.game.losingCoords, isWinner: state.game.isWinner });
 const mapDispatchToProps = { timeToStartGame, clickOnSquare };
 
 export default connect(

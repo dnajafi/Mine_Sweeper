@@ -20,14 +20,13 @@
   font-size: 0.5em;
 }
 
-
 .board {
   display: flex;
   justify-content: center;
 }
 
 .square {
-  background-color: black;
+  background-color: grey;
   height:30px;
   width:30px;
 }
@@ -44,7 +43,19 @@
   width:30px;
 }
 
+.flagSquare {
+  background-color: green;
+  height:30px;
+  width:30px;
+  font-size: 1.5em;
+}
+
+.winnerSquare {
+  background-color: blue;
+  height:30px;
+  width:30px;
+}
+
 .smiley {
   height: 30px;
-  
 }
