@@ -12,8 +12,8 @@ class App extends Component {
             <p>By Blaise Najafi</p>
           </div>
         </div>
-        
         <Board />
+        <p>PLEASE NOTE: Hold down SHIFT when clicking in order to mark a square with a flag.</p>
       </div>
     );
   }

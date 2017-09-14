@@ -5,7 +5,6 @@ import smiley from '../smileyFace.png';
 import sadFace from '../sadFace.jpeg';
 
 const Square = (props) => {
-
 	if(props.board) {
 		if(props.isWinner) {
 			return (
@@ -30,7 +29,6 @@ const Square = (props) => {
 			);
 		}
 
-
 		if(props.board[props.row][props.col].hasBeenClicked) {
 			return (
 				<button className="clickedSquare" onClick={ (evt) => props.onClick(props.row, props.col, evt.shiftKey) }>
@@ -47,7 +45,6 @@ const Square = (props) => {
 			<button className="square" onClick={ (evt) => props.onClick(props.row, props.col, evt.shiftKey) }></button>
 		);
 	}
-
 };
 
 class Board extends Component {
@@ -71,9 +68,6 @@ class Board extends Component {
 	}
 
 	render() {
-
-		// console.log(this.props.board);
-
 		let rows = [];
 
 		for(let i=0; i<10; i++) {
@@ -84,15 +78,13 @@ class Board extends Component {
 
 			<div className="board-container">
 				{!this.props.gameOver ?
-					<button style={{backgroundColor: "white"}} onClick={() => this.props.timeToStartGame()}><img className="smiley" src={smiley} /></button>
+					<button style={{backgroundColor: "white"}} onClick={() => this.props.timeToStartGame()}><img className="smiley" src={smiley} alt="Smiley Face" /></button>
 				:
-					<button style={{backgroundColor: "white"}} onClick={() => this.props.timeToStartGame()}><img className="smiley" src={sadFace} /></button>
+					<button style={{backgroundColor: "white"}} onClick={() => this.props.timeToStartGame()}><img className="smiley" src={sadFace} alt="Sad Face" /></button>
 				}
-				
 				<div className="board">
 					{rows}
 				</div>
-
 			</div>
 		);
 	}
@@ -105,7 +97,5 @@ export default connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(Board);
-
-
 
 

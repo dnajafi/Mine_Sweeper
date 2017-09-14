@@ -82,7 +82,6 @@ const buildBoard = function(board) {
 
 
 
-
 const initState = {
 	board: null,
 	gameOver: false,
@@ -103,15 +102,12 @@ export const timeToStartGame = () => {
 };
 
 export const clickOnSquare = (row, col, shiftFlag) => {
-
 	return (dispatch) => {
 		dispatch(clickSquare(row, col, shiftFlag));
 	}
-
 };
 
 const augmentBoard = function(row, col, board, shiftFlag) {
-
 	let currSquare = board[row][col];
 
 	if(shiftFlag) {
@@ -177,7 +173,6 @@ const augmentBoard = function(row, col, board, shiftFlag) {
 
 
 const turnAllMines = function(board) {
-
 	let newBoard = board.slice();
 
 	for(let i=0; i<newBoard.length; i++) {
@@ -203,11 +198,9 @@ const findTotalNumMines = function(board) {
 	}
 
 	return numMines;
-
 }
 
 const determineWinner = function(board) {
-
 	let totalNumMines = findTotalNumMines(board);
 	let countMineFlags = 0;
 
@@ -240,7 +233,6 @@ const makeWinnerBoard = function(board) {
 
 
 export default (state = initState, action) => {
-
 	switch(action.type) {
 		case START_GAME:
 			let board = [];
@@ -270,7 +262,7 @@ export default (state = initState, action) => {
 				let winner = determineWinner(result);
 
 				if(winner) {
-					// DID WIN ************************
+					// DID WIN
 					let winnerBoard = makeWinnerBoard(result);
 
 					return { ...state, board: winnerBoard, isWinner: true };
@@ -278,24 +270,8 @@ export default (state = initState, action) => {
 					// didn't win yet
 					return { ...state, board: result };
 				}
-
-				
 			}
-
 		default:
 			return state;
 	}
-
 };
-
-
-
-
-
-
-
-
-
-
-
-
