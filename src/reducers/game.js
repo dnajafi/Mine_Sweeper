@@ -108,10 +108,15 @@ export const clickOnSquare = (row, col, shiftFlag) => {
 };
 
 const augmentBoard = function(row, col, board, shiftFlag) {
+
+	console.log('000000');
+
 	let currSquare = board[row][col];
 
 	if(shiftFlag) {
 		currSquare.isFlag = !currSquare.isFlag;
+
+		console.log('***********');
 	}	else {
 
 		if(currSquare.symbol === '✸') {
@@ -121,10 +126,16 @@ const augmentBoard = function(row, col, board, shiftFlag) {
 		if(!currSquare.hasBeenClicked) {
 			currSquare.hasBeenClicked = true;
 
-			let numSquaresToReveal = Math.floor(Math.random() * 4);
-			let randomCountDown = 5; // just in case we can't decrement numSquaresToReveal down to 0
+			let numSquaresToReveal = Math.floor(Math.random() * (4 - 0)) + 0; //The maximum is exclusive and the minimum is inclusive; between 0 and 99
 
-			while(numSquaresToReveal > 0 || randomCountDown !== 0) {
+			let randomCountDown = 8; // just in case we can't decrement numSquaresToReveal down to 0
+
+			console.log('&&&&&&&&&&&&');
+
+			while(numSquaresToReveal > 0 && randomCountDown >= 0) {
+				console.log('$$$$$$$$$$$$$$$');
+				console.log('numSquaresToReveal: ', numSquaresToReveal);
+				console.log('randomCountDown: ', randomCountDown);
 				if(row > 0  && !board[row-1][col].hasBeenClicked && board[row-1][col].symbol !== '✸') {
 					board[row-1][col].hasBeenClicked = true;
 					numSquaresToReveal--;
@@ -165,6 +176,8 @@ const augmentBoard = function(row, col, board, shiftFlag) {
 		}
 	}
 
+	console.log('111111');
+
 	let newBoard = board.slice();
 
 	newBoard[row][col] = currSquare;
@@ -175,6 +188,8 @@ const augmentBoard = function(row, col, board, shiftFlag) {
 const turnAllMines = function(board) {
 	let newBoard = board.slice();
 
+	console.log('3333333');
+
 	for(let i=0; i<newBoard.length; i++) {
 		for(let j=0; j<newBoard[i].length; j++) {
 			if(newBoard[i][j].symbol === '✸') {
@@ -183,11 +198,15 @@ const turnAllMines = function(board) {
 		}
 	}
 
+	console.log('4444444');
+
 	return newBoard;
 }
 
 const findTotalNumMines = function(board) {
 	let numMines = 0;
+
+	console.log('5555555');
 
 	for(let i=0; i<board.length; i++) {
 		for(let j=0; j<board[i].length; j++) {
@@ -197,12 +216,16 @@ const findTotalNumMines = function(board) {
 		}
 	}
 
+	console.log('6666666');
+
 	return numMines;
 }
 
 const determineWinner = function(board) {
 	let totalNumMines = findTotalNumMines(board);
 	let countMineFlags = 0;
+
+	console.log('77777777');
 
 	for(let i=0; i<board.length; i++) {
 		for(let j=0; j<board[i].length; j++) {
@@ -218,10 +241,16 @@ const determineWinner = function(board) {
 		return true;
 	}
 
+	console.log('8888888');
+
 	return false;
 }
 
 const makeWinnerBoard = function(board) {
+
+	console.log('999999999');
+
+
 	for(let i=0; i<board.length; i++) {
 		for(let j=0; j<board[i].length; j++) {
 			board[i][j].hasBeenClicked = true
@@ -233,8 +262,12 @@ const makeWinnerBoard = function(board) {
 
 
 export default (state = initState, action) => {
+
+	console.log('1010101010');
+
 	switch(action.type) {
 		case START_GAME:
+			console.log('202020202020');
 			let board = [];
 			for(let i=0; i<10; i++) {
 				let row = [];
@@ -248,9 +281,11 @@ export default (state = initState, action) => {
 			return { ...state, board: board, gameOver: false, losingCoords: [-1, -1], isWinner: false }
 
 		case CLICK_SQUARE:
+			console.log('30303030303030');
 			let result = augmentBoard(action.payload.row, action.payload.col, state.board, action.payload.shiftFlag);
 
 			if(result === 'LOST') {
+				console.log('50505050505050');
 				// GAME OVER
 				// TURN ALL SQUARES TRUE
 				let losingBoard = turnAllMines(state.board);
@@ -258,12 +293,14 @@ export default (state = initState, action) => {
 				return { ...state, gameOver: true, board: losingBoard, losingCoords: [action.payload.row, action.payload.col] };
 			} else {
 				// result is equal to the new board
+				console.log('6060606060660');
 
 				let winner = determineWinner(result);
 
 				if(winner) {
 					// DID WIN
 					let winnerBoard = makeWinnerBoard(result);
+					console.log('707070070707070');
 
 					return { ...state, board: winnerBoard, isWinner: true };
 				} else {
@@ -272,6 +309,7 @@ export default (state = initState, action) => {
 				}
 			}
 		default:
+			console.log('40404000404040');
 			return state;
 	}
 };
