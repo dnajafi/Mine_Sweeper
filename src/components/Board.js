@@ -5,6 +5,7 @@ import smiley from '../smileyFace.png';
 import sadFace from '../sadFace.jpeg';
 
 const Square = (props) => {
+
 	if(props.board) {
 		if(props.isWinner) {
 			return (
@@ -48,8 +49,29 @@ const Square = (props) => {
 };
 
 class Board extends Component {
-
 	renderSquare(row, col) {
+
+		if(this.props.isWinner) {
+			const winnerFuction = function() {
+				alert('Winner Winner Chicken Dinner!');
+			};
+
+			return (
+				<Square row={row} col={col} onClick={winnerFuction} board={this.props.board} losingCoords={this.props.losingCoords} isWinner={this.props.isWinner} />
+			);
+
+		}
+
+		if(this.props.gameOver) {
+			const gameOverFunction = function() {
+				alert('Game Over!');
+			};
+
+			return (
+				<Square row={row} col={col} onClick={gameOverFunction} board={this.props.board} losingCoords={this.props.losingCoords} isWinner={this.props.isWinner} />
+			);
+		}
+
 		return (
 			<Square row={row} col={col} onClick={this.props.clickOnSquare} board={this.props.board} losingCoords={this.props.losingCoords} isWinner={this.props.isWinner} />
 		);
